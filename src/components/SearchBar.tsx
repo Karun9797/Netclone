@@ -1,10 +1,11 @@
-import { Search } from "lucide-react";
-import { useState, type ChangeEvent } from "react";
+import { Search, X } from "lucide-react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import MOVIE_DATA from "@/data/mockdata.json";
 import type { Movie } from "../type";
 
 const SearchBar = () => {
   const [showSearch, setShowSearch] = useState(false);
+  const [searchTitle, setSearchTitle] = useState("");
 
   const searchQuery = (query: string) => {
     console.log("Searching:", query);
@@ -14,15 +15,31 @@ const SearchBar = () => {
     console.log(result);
   };
 
+  const debounce = (func: (...args: any[]) => void, delay = 1000) => {
+    let timeOutId: ReturnType<typeof setTimeout>;
+    return (...args: any[]) => {
+      clearTimeout(timeOutId);
+      timeOutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  const debouncedSearch = useMemo(() => {
+    return debounce(searchQuery);
+  }, []);
+
   const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
-    searchQuery(query);
+    debouncedSearch(query);
+    setSearchTitle(query);
   };
 
   return (
-    <div className="flex h-10 items-center gap-2">
+    <div className="relative flex h-10 items-center gap-2">
       <input
         type="text"
+        value={searchTitle}
         placeholder="search movies"
         className={`border border-gray-300 px-4 py-2 transition-all duration-300 focus:ring-2 focus:ring-red-600 focus:outline-none ${
           showSearch
@@ -30,6 +47,14 @@ const SearchBar = () => {
             : "w-0 border-0 p-0 opacity-0"
         } `}
         onChange={handleSearchQueryChange}
+      />
+
+      <X
+        className={`absolute right-15 cursor-pointer rounded-full p-1 transition-all duration-300 hover:bg-gray-600 ${showSearch ? "block" : "hidden"}`}
+        size={25}
+        onClick={() => {
+          (setSearchTitle(""), searchQuery(""));
+        }}
       />
       <button
         onClick={() => setShowSearch(!showSearch)}
