@@ -1,19 +1,16 @@
+import type { Movie } from "../type";
 import MovieList from "./MovieList";
-import MOVIE_DATA from "@/data/mockdata.json";
 
-const Movies = () => {
+const TrendingNow = ({ movies }: { movies: Movie[] }) => {
   return (
-    <div className="mt-6 px-6">
-      <h3>Trending Now</h3>
-      <div>
-        {MOVIE_DATA?.results?.length > 0 ? (
-          <MovieList movies={MOVIE_DATA?.results} />
-        ) : (
-          <div>No trending movies were found!!!</div>
-        )}
+    <>
+      <h3 className="font-medium sm:text-xl lg:text-2xl">Trending Now</h3>
+
+      <div className="mx-auto my-4">
+        <MovieList movies={movies} />
       </div>
-    </div>
+    </>
   );
 };
 
-export default Movies;
+export default TrendingNow;

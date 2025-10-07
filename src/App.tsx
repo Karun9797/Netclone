@@ -1,23 +1,16 @@
-import Header from "./components/Header";
 import Hero from "./components/Hero";
-import MovieCard from "./components/MovieCard";
 import Movies from "./components/TrendingNow";
-import { useSearchStore } from "./store/searchStore";
+import { usePopularMovies } from "./lib/usePopularMovies";
 
 function App() {
-  const results = useSearchStore((state) => state.results);
+  const { movies, loading } = usePopularMovies();
+  {
+    loading && <div>Movies are loading...</div>;
+  }
   return (
     <>
-      <Header />
-      {results && (
-        <div className="grid grid-cols-5 space-y-4">
-          {results.map((movie) => (
-            <MovieCard movie={movie} />
-          ))}
-        </div>
-      )}
       <Hero />
-      <Movies />
+      <Movies movies={movies} />
     </>
   );
 }

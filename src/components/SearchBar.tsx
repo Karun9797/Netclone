@@ -1,35 +1,14 @@
 import { Search, X } from "lucide-react";
-import { useMemo, useState, type ChangeEvent } from "react";
-import { useSearchStore } from "../store/searchStore";
+import { useSearchMovies } from "../lib/useSearchMovies";
 
 const SearchBar = () => {
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchTitle, setSearchTitle] = useState("");
-  const performSearch = useSearchStore((state) => state.performSearch);
-
-  const searchQuery = (query: string) => {
-    performSearch(query);
-  };
-
-  const debounce = (func: (...args: any[]) => void, delay = 1000) => {
-    let timeOutId: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-      clearTimeout(timeOutId);
-      timeOutId = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
-
-  const debouncedSearch = useMemo(() => {
-    return debounce(searchQuery);
-  }, []);
-
-  const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    debouncedSearch(query);
-    setSearchTitle(query);
-  };
+  const {
+    searchTitle,
+    showSearch,
+    handleSearchQueryChange,
+    clearSearch,
+    setShowSearch,
+  } = useSearchMovies();
 
   return (
     <div className="relative flex h-10 items-center gap-2">
@@ -48,9 +27,7 @@ const SearchBar = () => {
       <X
         className={`absolute right-15 cursor-pointer rounded-full p-1 transition-all duration-300 hover:bg-gray-600 ${showSearch ? "block" : "hidden"}`}
         size={25}
-        onClick={() => {
-          (setSearchTitle(""), searchQuery(""));
-        }}
+        onClick={clearSearch}
       />
       <button
         onClick={() => setShowSearch(!showSearch)}
