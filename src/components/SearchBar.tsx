@@ -1,18 +1,14 @@
 import { Search, X } from "lucide-react";
 import { useMemo, useState, type ChangeEvent } from "react";
-import MOVIE_DATA from "@/data/mockdata.json";
-import type { Movie } from "../type";
+import { useSearchStore } from "../store/searchStore";
 
 const SearchBar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchTitle, setSearchTitle] = useState("");
+  const performSearch = useSearchStore((state) => state.performSearch);
 
   const searchQuery = (query: string) => {
-    console.log("Searching:", query);
-    const result = MOVIE_DATA?.results?.filter((movie: Movie) =>
-      movie.title.toLowerCase().includes(query.toLowerCase()),
-    );
-    console.log(result);
+    performSearch(query);
   };
 
   const debounce = (func: (...args: any[]) => void, delay = 1000) => {
